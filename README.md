@@ -74,15 +74,18 @@ This script:
 3. pools them into one vector of length `2L` (**acceptor + donor**),
 4. bins each probability into 7 intervals, and prints counts.
 
-### Bin edges (7 bins)
+### Bin edges
 
-1. `[0, 0.001)`
-2. `[0.001, 0.05)`
-3. `[0.05, 0.2)`
-4. `[0.2, 0.35)`
-5. `[0.35, 0.5)`
-6. `[0.5, 0.8)`
-7. `[0.8, 1]`
+| Order | Range           | Label                                         |
+| ----- | --------------- | --------------------------------------------- |
+| 1.    | `[0, 0.001)`    | "Not a site"                                  |
+| 2.    | `[0.001, 0.05)` | "Unlikely site"                               |
+| 3.    | `[0.05, 0.2)`   | "Insignificant site"                          |
+| 4.    | `[0.2, 0.35)`   | "Weak-cryptic or tissue-specific site"        |
+| 5.    | `[0.35, 0.5)`   | "Significant-cryptic or tissue-specific site" |
+| 6.    | `[0.5, 0.8)`    | "Significant site"                            |
+| 7.    | `[0.8, 1]`      | "Very strong site"                            |
+
 
 ---
 
