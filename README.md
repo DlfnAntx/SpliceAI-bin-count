@@ -6,7 +6,7 @@ Minimal SpliceAI ensemble wrapper for bin-counting splice-site signal from a sin
 - **stdin:** one nucleotide sequence (whitespace ignored)
 - **stdout:** **two lines**, each **7 integers**
   - line 1: SpliceAI on the input (“sense”)
-  - line 2: SpliceAI on the **reversed** sequence (reverse-only)
+  - line 2: SpliceAI on the **reversed** sequence ("anti-sense", NOT reverse-complement)
 - **stderr:** hard-silenced at the OS file-descriptor level
 
 ---
