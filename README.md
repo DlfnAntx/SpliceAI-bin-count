@@ -14,10 +14,13 @@ Minimal SpliceAI ensemble wrapper for bin-counting splice-site signal from a sin
 ## Installation / environment expectations
 
 - Python 3.x
-- TensorFlow + Keras loader compatible with `from keras.saving import load_model`
-	- If Keras is unavailable, this line can be replaced with `from tensorflow.keras.models import load_model`
+- `TensorFlow` + `Keras` Python packages installed.
+	- If Keras is unavailable, the line:
+	  `from keras.saving import load_model`
+	  can be replaced with:
+	  `from tensorflow.keras.models import load_model`
 - `spliceai` Python package installed.
-	- This relies on the default bundling being at: `${spliceai_package_dir}/models/spliceai1.h5` … `spliceai5.h5`
+	- This relies on the default bundling of the models being at: `${spliceai_package_dir}/models/spliceai1.h5` … `spliceai5.h5`
 	- I personally prefer [this fork](https://github.com/bw2/SpliceAI) of the package, but the models this script uses are identical regardless.
 
 ---
@@ -91,12 +94,12 @@ This script:
 
 ## Constraints
 
-* **Input must be just sequence.** The script strips whitespace and uppercases; anything else is treated as “unknown base.”
+* **Input must be just sequence.** The script uppercases and strips whitespace; anything else is treated as “unknown base.”
 * **RNA & DNA supported:** everything except for A/C/G/T/U (including N and IUPAC ambiguity) becomes an all-zero channel vector (effectively “N”)
 * **Fixed SpliceAI context:** hard-coded 10k padding (5k each flank), matching the standard SpliceAI-10k setting.
 * **Counts are pooled:** acceptor and donor are **not** reported separately, only their combined bin counts.
 * **Stderr is suppressed:** if TensorFlow throws, you may get a silent failure. For debugging, remove the `dup2` stderr redirect line.
-* **Sequence length scaling:** runtime/memory scale with sequence length; long cassettes can OOM depending on device.
+* **Sequence length scaling:** runtime/memory scale with sequence length; long cassettes can OOM (Out of Memory) depending on device.
 * **Model determinism is not strictly enforced:** for the sake of simplicity and runtime, the exact predicted strengths of sites can vary based on hardware.
 	* However, the chance of this altering the values enough to shift the bin counts between runs is effectively zero.
 
@@ -110,7 +113,7 @@ This script:
 d=os.open(os.devnull,os.O_WRONLY);os.dup2(d,2);os.close(d)
 ```
 
-This redirects the **OS file descriptor 2** (stderr) to `/dev/null` *before* TensorFlow loads. That’s important because verbose TF/absl logs frequently bypass Python’s `sys.stderr` and write directly to FD2.
+This redirects the **OS file descriptor 2** (stderr) to `/dev/null` *before* TensorFlow loads. That’s important because verbose TF/absl logs frequently bypass Python’s `sys.stderr`.
 
 ### 2) Load the 5 SpliceAI models once
 
@@ -134,7 +137,7 @@ x=tf.one_hot([4]*5000+[{65:0,67:1,71:2,84:3,85:3}.get(c,4)for c in s.encode()]+[
 	* Result: unknown bases become `[0,0,0,0]`, i.e., no base evidence.
 * Adds batch dimension with `[None]`: `shape = (1, L+10000, 4)`.
 
-### 4) Run the ensemble and average
+### 4) Run the ensemble of the models and average
 
 ```py
 y=0
